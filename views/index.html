@@ -1,16 +1,7 @@
-<nav>
-    <ul>
-        {{ if .IsLoggedIn }}
-        <li><a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/logout">Logout</a></li>
-        {{ else }}
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-        {{ end }}
-    </ul>
-</nav>
-<h1 class="font-semibold text-red-500">{{.Title}}</h1>
+
+    {{template "layouts/header" .}}
+    <main class="mb-auto max-w-7xl mx-auto">
+        <h1 class="text-2xl font-semibold">{{.Title}}</h1>
+        <a class="btn btn-primary">Test</a>
+    </main>
+

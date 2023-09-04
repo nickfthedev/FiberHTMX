@@ -1,3 +1,3 @@
 
 
-Tailwind Windows Command: ./tailwind.exe -i ./input.css -o ./public/output.css --watch
+Tailwind: npx tailwindcss -i ./input.css -o ./public/output.css --watch
