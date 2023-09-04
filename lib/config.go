@@ -7,10 +7,10 @@ import (
 	"os"
 )
 
-var Cfg Config
+var Config ConfigStruct
 
 
-type Config struct {
+type ConfigStruct struct {
 	//Database Driver SQLITE, POSTGRESQL
 	DbDriver string
 	//Database Filename (for SQLITE)
@@ -44,8 +44,8 @@ type Config struct {
 
 
 // Load config.json from root. If the file does not exist, a config.json will be created
-func LoadConfig(path string) (Config, error) {
-	var payload Config
+func LoadConfig(path string) (ConfigStruct, error) {
+	var payload ConfigStruct
 	// Open our jsonFile
 	jsonFile, err := os.Open(path)
 	// if we os.Open returns an error then handle it
@@ -85,12 +85,12 @@ func LoadConfig(path string) (Config, error) {
 
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
-	Cfg = payload
+	Config = payload
 	return payload, nil
 }
 
 // Writes given config struct into config.json at the root directory
-func WriteConfig(cfg Config, path string) {
+func WriteConfig(cfg ConfigStruct, path string) {
 
 	file, _ := json.MarshalIndent(cfg, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)

@@ -11,7 +11,7 @@ import (
 func main() {
 	
 		lib.LoadConfig("config.json");
-		fmt.Println("Config:", lib.Cfg.DbDriver);
+		fmt.Println("Config:", lib.Config.DbDriver);
 
     app := fiber.New()
 
