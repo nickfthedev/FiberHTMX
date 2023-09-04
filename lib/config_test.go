@@ -34,15 +34,15 @@ func TestWriteConfig(t *testing.T) {
 	defer f.Close()
 	wrt := io.MultiWriter(os.Stdout, f)
 	log.SetOutput(wrt)
-	c := Config{
+	c := ConfigStruct{
 		DbDriver: "TESTDRIVER",
 	}
 
 	WriteConfig(c, "../tmp/config_test_write.json")
 	LoadConfig("../tmp/config_test_write.json")
-	if Cfg.DbDriver != "TESTDRIVER" {
-		log.Fatalln("Cfg.DbDriver should be TESTDRIVER but is ", Cfg.DbDriver)
+	if Config.DbDriver != "TESTDRIVER" {
+		log.Fatalln("Config.DbDriver should be TESTDRIVER but is ", Config.DbDriver)
 	} else {
-		log.Println("Passed! Cfg.DbDriver should be TESTDRIVER and is ", Cfg.DbDriver)
+		log.Println("Passed! Config.DbDriver should be TESTDRIVER and is ", Config.DbDriver)
 	}
 }

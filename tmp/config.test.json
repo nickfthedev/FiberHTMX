@@ -1,0 +1,13 @@
+{
+ "DbDriver": "SQLITE",
+ "DbFileName": "database.sqlite",
+ "DbHost": "YOUR HOST IF POSTGRESQL is used",
+ "DbUser": "DB USERNAME IF POSTGRESQL is used",
+ "DbPass": "YOUR PASSWORD IF POSTGRESQL is used",
+ "DbName": "YOUR DB NAME IF POSTGRESQL is used",
+ "DbPort": "DB PORT IF POSTGRESQL is used",
+ "PostgresURL": "PREFERRED WAY OF CONNECTING",
+ "TokenSecret": "ABCDEFG",
+ "APIPort": "3000",
+ "APIUrl": "127.0.0.1"
+}

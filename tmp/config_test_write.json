@@ -1,0 +1,13 @@
+{
+ "DbDriver": "TESTDRIVER",
+ "DbFileName": "",
+ "DbHost": "",
+ "DbUser": "",
+ "DbPass": "",
+ "DbName": "",
+ "DbPort": "",
+ "PostgresURL": "",
+ "TokenSecret": "",
+ "APIPort": "",
+ "APIUrl": ""
+}
