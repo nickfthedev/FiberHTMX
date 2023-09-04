@@ -3,7 +3,7 @@ package lib
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -77,7 +77,7 @@ func LoadConfig(path string) (ConfigStruct, error) {
 
 	fmt.Println("Successfully Opened config.json")
 	// read our opened jsonFile as a byte array.
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue, _ := io.ReadAll(jsonFile)
 
 	// we unmarshal our byteArray which contains our
 	// jsonFile's content into 'users' which we defined above
@@ -93,5 +93,5 @@ func LoadConfig(path string) (ConfigStruct, error) {
 func WriteConfig(cfg ConfigStruct, path string) {
 
 	file, _ := json.MarshalIndent(cfg, "", " ")
-	_ = ioutil.WriteFile(path, file, 0644)
+	_ = os.WriteFile(path, file, 0644)
 }
