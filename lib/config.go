@@ -7,6 +7,9 @@ import (
 	"os"
 )
 
+var Cfg Config
+
+
 type Config struct {
 	//Database Driver SQLITE, POSTGRESQL
 	DbDriver string
@@ -39,7 +42,6 @@ type Config struct {
 // 	BuildExecutable bool
 // }
 
-var Cfg Config
 
 // Load config.json from root. If the file does not exist, a config.json will be created
 func LoadConfig(path string) (Config, error) {

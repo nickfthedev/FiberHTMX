@@ -2,7 +2,7 @@ package main
 
 import (
     "log"
-
+		"fmt"
     "github.com/gofiber/fiber/v2"
 
 		"github.com/nickfthedev/fiberHTMX/lib"
@@ -11,6 +11,7 @@ import (
 func main() {
 	
 		lib.LoadConfig("config.json");
+		fmt.Println("Config:", lib.Cfg.DbDriver);
 
     app := fiber.New()
 
