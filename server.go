@@ -41,5 +41,18 @@ func main() {
 		})
 	})
 
+	app.Get("/register", func(c *fiber.Ctx) error {
+		// Render index template
+		return c.Render("auth/register", fiber.Map{
+			"IsLoggedIn": user.IsLoggedIn,
+			"Title":      "Hello, World!",
+		})
+	})
+	app.Get("/login", func(c *fiber.Ctx) error {
+		// Render index template
+		return c.Render("auth/login", fiber.Map{
+			"IsLoggedIn": user.IsLoggedIn,
+		})
+	})
 	log.Fatal(app.Listen(":3000"))
 }
