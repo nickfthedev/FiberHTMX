@@ -20,6 +20,7 @@ func RenderRegister(c *fiber.Ctx) error {
 }
 
 func RenderLogin(c *fiber.Ctx) error {
+	return c.Render("auth/login", fiber.Map{
 		"IsLoggedIn": true,
 	})
 }
