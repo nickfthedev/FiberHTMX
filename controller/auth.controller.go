@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -40,7 +39,7 @@ func LogoutUser(c *fiber.Ctx) error {
 		Expires:  time.Now().Add(-(time.Hour * 2)),
 		SameSite: "lax",
 	})
-	return c.JSON(fiber.Map{"status": "success", "message": "You've been logged out", "data": nil})
+	return c.Redirect("/", 302)
 
 }
 
@@ -49,18 +48,17 @@ func LoginUser(c *fiber.Ctx) error {
 
 	var input model.UserLoginInput // Validate input
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err})
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input!"}, "common/messagelayout")
 	}
 
 	// Find user if exists
 	var user model.User
 	if err := db.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "E-Mail or Password incorrect", "data": err})
-
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/messagelayout")
 	}
 	//Check Password against Database
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "E-Mail or Password incorrect", "data": err})
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/messagelayout")
 
 	}
 
@@ -73,8 +71,7 @@ func LoginUser(c *fiber.Ctx) error {
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString([]byte(lib.Config.TokenSecret))
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Failed to create token", "data": err})
-
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to create token"}, "common/messagelayout")
 	}
 
 	// Create cookie
@@ -88,14 +85,14 @@ func LoginUser(c *fiber.Ctx) error {
 	c.Cookie(cookie)
 	// ...
 
-	// Create second Cookie with UserID
-	cookieUserID := new(fiber.Cookie)
-	cookieUserID.Name = "UserID"
-	cookieUserID.Value = fmt.Sprint(user.ID)
-	cookieUserID.Expires = time.Now().Add(30 * 24 * time.Hour)
-	cookieUserID.SameSite = "lax"
-	c.Cookie(cookieUserID) //Set Cookie with UserID
+	// // Create second Cookie with UserID
+	// cookieUserID := new(fiber.Cookie)
+	// cookieUserID.Name = "UserID"
+	// cookieUserID.Value = fmt.Sprint(user.ID)
+	// cookieUserID.Expires = time.Now().Add(30 * 24 * time.Hour)
+	// cookieUserID.SameSite = "lax"
+	// c.Cookie(cookieUserID) //Set Cookie with UserID
 
 	//Return Token in Response
-	return c.JSON(fiber.Map{"status": "success", "message": "Successfully loggedin", "data": nil})
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "Logged in successfully"}, "common/messagelayout")
 } //LoginUser

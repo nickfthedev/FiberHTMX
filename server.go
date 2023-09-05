@@ -11,6 +11,7 @@ import (
 	"github.com/nickfthedev/fiberHTMX/controller"
 	"github.com/nickfthedev/fiberHTMX/db"
 	"github.com/nickfthedev/fiberHTMX/lib"
+	"github.com/nickfthedev/fiberHTMX/middleware"
 	"github.com/nickfthedev/fiberHTMX/model"
 
 	"gorm.io/gorm"
@@ -41,8 +42,6 @@ func main() {
 		// Create Standard User: admin Password: password
 		controller.CreateStandardAdminUser()
 	}
-	// Simulate user authentication status (you should implement your actual login logic)
-	user := User{IsLoggedIn: false}
 
 	// Initialize standard Go html template engine
 	engine := html.New("./views", ".html")
@@ -55,19 +54,33 @@ func main() {
 	// Static folder
 	app.Static("/", "./public")
 
+	page := app.Group("/", middleware.IsLoggedIn)
+	htmx := app.Group("/")
 	//
-	// Routes
+	// Routes which render sites
 	//
-	app.Get("/", func(c *fiber.Ctx) error {
+	page.Get("/", func(c *fiber.Ctx) error {
+		fmt.Println(c.Locals("id"))
 		// Render index template
 		return c.Render("index", fiber.Map{
-			"IsLoggedIn": user.IsLoggedIn,
-			"Title":      "Hello, World!",
+			"Title": "Hello, World!",
 		})
 	})
-	app.Get("/register", controller.RenderRegister)
-	app.Get("/login", controller.RenderLogin)
-	app.Post("register", controller.CreateUser)
+	page.Get("/protected", middleware.LoginRequired, func(c *fiber.Ctx) error {
+		// Render index template
+		return c.Render("index", fiber.Map{
+			"Title": "Protected Page!",
+		})
+	})
+	page.Get("/register", controller.RenderRegister)
+	page.Get("/login", controller.RenderLogin)
+	page.Get("logout", controller.LogoutUser)
+
+	//
+	// Routes which return HTML Chuncks for HTMX
+	//
+	htmx.Post("register", controller.CreateUser)
+	htmx.Post("login", controller.LoginUser)
 
 	// Start server
 	log.Fatal(app.Listen("127.0.0.1:3000"))

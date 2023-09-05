@@ -2,7 +2,8 @@
     {{template "layouts/header" .}}
     <main class="mb-auto max-w-7xl mx-auto justify-center gap-2">
         <div class="flex flex-col items-center h-full w-full">
-
+            <div id="result" class="w-full"></div>
+            
             <h2 class="mt-2 text-center text-3xl font-bold tracking-tight text-base-content">
                 Register for an account
             </h2>
@@ -11,13 +12,12 @@
                     >sign in</a
                 > if you already have an account.
             </p>
-        <form action="/register" method="POST" class="flex flex-col items-center space-y-2 w-full pt-4">
+        <form hx-post="/register" hx-swap="innerHTML" hx-target="#result"  method="POST" class="flex flex-col items-center space-y-2 w-full pt-4">
             <input type="email" label="E-Mail" placeholder="E-Mail" name="email" class="input input-bordered w-full" />
-            <Input type="text" id="username" label="Username" placeholder="Username" class="input input-bordered w-full"/> 
-            <Input type="password" id="password" label="Password" placeholder="Password" class="input input-bordered w-full"/>
+            <Input type="text" id="name" name="name" placeholder="Name" class="input input-bordered w-full"/> 
+            <Input type="password" id="password" name="password" label="Password" placeholder="Password" class="input input-bordered w-full"/>
             <Input type="password" id="confirmpassword" name="confirmpassword" label="Repaeat Password" placeholder="Repaeat Password" class="input input-bordered w-full" />
             <button class="btn btn-primary w-full">Register</button>
-
         </form>
         </div>
     </main>
