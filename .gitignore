@@ -1,3 +1,6 @@
 node_modules
 tmp/*.log
 config.json
+database.sqlite
+tmp/main.exe
+tmp/main.exe~
