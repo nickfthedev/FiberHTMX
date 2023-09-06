@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -13,6 +14,67 @@ import (
 	"github.com/nickfthedev/fiberHTMX/model"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func UpdateUserPassword(c *fiber.Ctx) error {
+	userpw := new(model.UserChangePassword)
+	if err := c.BodyParser(userpw); err != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Could not parse the request body!"}, "common/empty")
+	}
+	fmt.Printf("%#v\n", userpw)
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "Password has been changed successfully"}, "common/empty")
+
+}
+
+func UpdateUserProfile(c *fiber.Ctx) error {
+	userid := c.Locals("ID")
+	// Parse the form data
+	user := new(model.User)
+	if err := c.BodyParser(user); err != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Could not parse the request body!"}, "common/empty")
+	}
+
+	// Find the user in the database
+	dbUser := new(model.User)
+	db.DB.Where("id = ?", userid).First(&dbUser)
+
+	// Check if the username already exist if changed
+	if dbUser.Username != user.Username {
+		tempUser := new(model.User)
+		db.DB.Where("username = ?", user.Username).First(&tempUser)
+		if tempUser.ID != 0 {
+			return c.Render("common/error", fiber.Map{"ErrorMessage": "Username already exists!"}, "common/empty")
+		}
+	}
+
+	// Update the user's details
+	dbUser.Name = user.Name
+	dbUser.Username = user.Username
+
+	// Save the updated user details
+	res := db.DB.Save(&dbUser)
+	if res.Error != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to update user", "ErrorCode": res.Error.Error()}, "common/empty")
+
+	}
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "User profile updated successfully"}, "common/empty")
+}
+
+func RenderUpdateUser(c *fiber.Ctx) error {
+	// Create a new instance of the User model
+	user := new(model.User)
+	// Query the database for a user with the UUID provided in the request context
+	db.DB.Where("uuid = ?", c.Locals("UUID")).First(&user)
+
+	// Create a new instance of the UserSafe model
+	userSafe := new(model.UserSafe)
+	// Convert the User instance to JSON
+	userJSON, _ := json.Marshal(user)
+	//Unmarshall userJSON to userSafe instance without Password
+	_ = json.Unmarshal(userJSON, &userSafe)
+
+	fmt.Printf("%+v\n", userSafe)
+	return c.Render("user/updateprofile", fiber.Map{"user": userSafe})
+}
 
 func VerifyUser(c *fiber.Ctx) error {
 	// Get the UUID from the URL
@@ -128,7 +190,6 @@ func CreateStandardAdminUser() {
 	user := new(model.User)
 	user.Username = "admin"
 	user.Name = "admin"
-	user.Fullname = "Administator"
 	user.Email = "admin@admin.com"
 	user.Password = "password"
 	user.Verified = true

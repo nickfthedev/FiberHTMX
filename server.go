@@ -61,7 +61,6 @@ func main() {
 	// Routes which render sites
 	//
 	page.Get("/", func(c *fiber.Ctx) error {
-		fmt.Println(c.Locals("id"))
 		// Render index template
 		return c.Render("index", fiber.Map{
 			"Title": "Hello, World!",
@@ -77,6 +76,9 @@ func main() {
 	page.Get("/login", middleware.GuestOnly, controller.RenderLogin)
 	page.Get("logout", controller.LogoutUser)
 	page.Get("user/verify/:uuid", controller.VerifyUser)
+	page.Get("user/update", middleware.LoginRequired, controller.RenderUpdateUser)
+	page.Post("user/update", middleware.LoginRequired, controller.UpdateUserProfile)
+	page.Post("user/updatepassword", middleware.LoginRequired, controller.UpdateUserPassword)
 	//
 	// Routes which return HTML Chuncks for HTMX
 	//

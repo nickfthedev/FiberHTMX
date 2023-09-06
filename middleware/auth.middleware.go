@@ -73,6 +73,7 @@ func IsLoggedIn(c *fiber.Ctx) error {
 	user, _ := CheckLogin(c)
 	if user.ID != 0 {
 		c.Locals("Name", user.Name)
+		c.Locals("UUID", user.UUID)
 		c.Locals("ID", user.ID)
 		c.Locals("IsLoggedIn", true)
 	}

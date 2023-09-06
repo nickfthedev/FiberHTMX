@@ -1,0 +1,153 @@
+<main class="py-4 mb-auto">
+  <div class="mx-auto max-w-4xl p-2 sm:px-6 lg:px-8">
+    <div id="result" class="w-full"></div>
+
+    <h2
+      class="mt-2 text-center text-3xl font-bold tracking-tight text-base-content"
+    >
+      Update Profile
+    </h2>
+    <p class="text-center mt-1">Update your profile informations.</p>
+    <div class="flex flex-col items-center space-y-2 w-full pt-4">
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">UUID</span>
+        </label>
+        <input
+          value="{{ .user.UUID }}"
+          type="text"
+          label="UUID"
+          placeholder="UUID"
+          name="uuid"
+          class="input input-bordered w-full"
+          disabled
+        />
+      </div>
+      <div class="flex flex-row w-full items-end gap-2">
+        <div class="form-control grow">
+          <label class="label">
+            <span class="label-text">E-Mail</span>
+          </label>
+          <input
+            value="{{ .user.Email }}"
+            type="email"
+            label="E-Mail"
+            placeholder="E-Mail"
+            name="email"
+            class="input input-bordered"
+            disabled
+          />
+        </div>
+        <button class="btn btn-secondary" disabled>Change (Soon)</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div id="resultpr" class="w-full mb-3"></div>
+
+    <h3
+      class="-mt-2 text-center text-xl font-semibold tracking-tight text-base-content"
+    >
+      Profile
+    </h3>
+
+    <form
+      hx-post="/user/update"
+      hx-swap="innerHTML"
+      hx-target="#resultpr"
+      method="POST"
+      class="flex flex-col items-center space-y-2 w-full pt-4"
+    >
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Name</span>
+        </label>
+        <input
+          value="{{ .user.Name }}"
+          type="text"
+          label="Name"
+          placeholder="Name"
+          name="name"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Username</span>
+        </label>
+        <input
+          value="{{ .user.Username }}"
+          type="text"
+          label="Username"
+          placeholder="Username"
+          name="username"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <button class="btn btn-primary w-full md:w-1/4 self-end mt-4">
+        Save
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <div id="resultpw" class="w-full mb-3"></div>
+
+    <h3
+      class="-mt-2 text-center text-xl font-semibold tracking-tight text-base-content"
+    >
+      Change Password
+    </h3>
+    <form
+      hx-post="/user/updatepassword"
+      hx-swap="innerHTML"
+      hx-target="#resultpw"
+      method="POST"
+      class="flex flex-col items-center space-y-2 w-full pt-4"
+    >
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Old Password</span>
+        </label>
+        <input
+          type="password"
+          id="oldpassword"
+          name="oldpassword"
+          label="Old Password"
+          placeholder="Old Password"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">New Password</span>
+        </label>
+        <input
+          type="password"
+          id="newpassword"
+          name="newpassword"
+          label="New Password"
+          placeholder="New Password"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Confirm New Password</span>
+        </label>
+        <input
+          type="password"
+          id="confirmpassword"
+          name="confirmpassword"
+          label="Repaeat Password"
+          placeholder="Repaeat Password"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <button class="btn btn-warning w-full md:w-1/4 self-end mt-4">
+        Change Password
+      </button>
+    </form>
+  </div>
+</main>

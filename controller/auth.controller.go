@@ -13,7 +13,6 @@ import (
 
 func RenderRegister(c *fiber.Ctx) error {
 	return c.Render("auth/register", fiber.Map{
-
 		"Title": "Hello, World!",
 	})
 }
