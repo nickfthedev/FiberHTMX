@@ -1,4 +1,5 @@
 {
+ "AppName": "MyApp",
  "DbDriver": "SQLITE",
  "DbFileName": "database.sqlite",
  "DbHost": "YOUR HOST IF POSTGRESQL is used",

@@ -13,15 +13,13 @@ import (
 
 func RenderRegister(c *fiber.Ctx) error {
 	return c.Render("auth/register", fiber.Map{
-		"IsLoggedIn": true,
-		"Title":      "Hello, World!",
+
+		"Title": "Hello, World!",
 	})
 }
 
 func RenderLogin(c *fiber.Ctx) error {
-	return c.Render("auth/login", fiber.Map{
-		"IsLoggedIn": true,
-	})
+	return c.Render("auth/login", fiber.Map{})
 }
 
 // Logout USer & Destroy Cookie

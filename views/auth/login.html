@@ -7,6 +7,22 @@
     </script>
     <main class="mb-auto max-w-7xl mx-auto justify-center gap-2">
         <div class="flex flex-col items-center h-full w-full">
+            {{ if .SuccessMessage }}
+            <div class="alert alert-success w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>
+                    {{ .SuccessMessage }}
+                </span>
+              </div>
+            {{end}}  
+            {{ if .ErrorMessage }}
+            <div class="alert alert-error w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>
+                    {{ .ErrorMessage }}.
+                </span>
+              </div>
+            {{end}}  
             <div id="result" class="w-full"></div>
             <h2 class="mt-2 text-center text-3xl font-bold tracking-tight text-base-content">
                 Login to your account

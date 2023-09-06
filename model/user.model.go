@@ -1,17 +1,21 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 // User struct
 type User struct {
 	gorm.Model
-	Name       string `gorm:"not null; default:null" json:"name" form:"name" binding:"required"`
-	Username   string `gorm:"unique_index;not null;unique;default:null" json:"username" form:"username" binding:"required"`
-	Email      string `gorm:"unique_index;not null;unique;default:null" json:"email" form:"email" binding:"required"`
-	Password   string `gorm:"not null; default:null" json:"password" form:"password" binding:"required"`
-	Verified   bool   `gorm:"default:false"`
-	Fullname   string `json:"fullname" form:"fullname"`
-	AvatarPath string `json:"avatarpath" form:"avaterpath"`
+	UUID       uuid.UUID `gorm:"type:uuid;default:null" json:"uuid"`
+	Name       string    `gorm:"not null; default:null" json:"name" form:"name" binding:"required"`
+	Username   string    `gorm:"unique_index;not null;unique;default:null" json:"username" form:"username" binding:"required"`
+	Email      string    `gorm:"unique_index;not null;unique;default:null" json:"email" form:"email" binding:"required"`
+	Password   string    `gorm:"not null; default:null" json:"password" form:"password" binding:"required"`
+	Verified   bool      `gorm:"default:false"`
+	Fullname   string    `json:"fullname" form:"fullname"`
+	AvatarPath string    `json:"avatarpath" form:"avaterpath"`
 }
 
 // Input for Login
@@ -39,9 +43,9 @@ type RegisterUser struct {
 	Fullname        string `json:"fullname" binding:"required" form:"fullname"`
 }
 
-/////
-///// Not used for now
-/////
+// ///
+// /// Not used for now
+// ///
 type UserAPI struct {
 	ID         int
 	Email      string `json:"email"`

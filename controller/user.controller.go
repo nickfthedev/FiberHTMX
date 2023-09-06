@@ -7,10 +7,38 @@ import (
 	"unicode"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/nickfthedev/fiberHTMX/db"
+	"github.com/nickfthedev/fiberHTMX/lib"
 	"github.com/nickfthedev/fiberHTMX/model"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func VerifyUser(c *fiber.Ctx) error {
+	// Get the UUID from the URL
+	uuid := c.Params("uuid")
+
+	// Find the user with the given UUID
+	user := new(model.User)
+	db.DB.Where("uuid = ?", uuid).First(&user)
+	fmt.Println(user.ID)
+	// If the user is not found, return an error
+	if user.ID == 0 {
+		return c.Render("auth/login", fiber.Map{"ErrorMessage": "User not found"})
+	}
+
+	// If the user is already verified, return an error
+	if user.Verified {
+		return c.Render("auth/login", fiber.Map{"ErrorMessage": "User already verified"})
+	}
+
+	// Otherwise, verify the user and save to the database
+	user.Verified = true
+	db.DB.Save(&user)
+
+	// Return a success message
+	return c.Render("auth/login", fiber.Map{"SuccessMessage": "User verified successfully"})
+}
 
 // func CreateUser
 func CreateUser(c *fiber.Ctx) error {
@@ -77,6 +105,7 @@ func CreateUser(c *fiber.Ctx) error {
 		//return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Failed to hash password", "data": err.Error()})
 	}
 	user.Password = string(hash)
+	user.UUID = uuid.New()
 	result := db.DB.Create(&user) // pass pointer of data to Create
 	if result.Error != nil {      //Error handling
 		if strings.Contains(result.Error.Error(), "UNIQUE constraint failed: users.email") {
@@ -84,11 +113,15 @@ func CreateUser(c *fiber.Ctx) error {
 		}
 		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to create user", "ErrorCode": result.Error.Error()}, "common/empty")
 	}
+	// Send Verification Mail
+	msg := "Welcome to " + lib.Config.AppName + "!<br><br> Please verify your account and click the link: <a href=\"https://" + lib.Config.Host + "/user/verify/" + user.UUID.String() + "\">Verify Account</a>"
+	errMail := lib.SendEmail(user.Email, "Activate your Account", msg, "text/html")
+	if errMail != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to send activation Mail, but registered successfully."}, "common/empty")
+	}
 	//If no error send back ok
-	return c.Render("common/success", fiber.Map{"SuccessMessage": "Registered successfully", "SuccessCode": "You can now login"}, "common/empty")
-	//return c.JSON(fiber.Map{"status": "success", "message": "User successfully created", "data": user.ID})
-
-} // func CreateUser(c *fiber.Ctx)
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "Registered successfully", "SuccessCode": "We send you an email to verify your account. After verification you can login"}, "common/empty")
+}
 
 func CreateStandardAdminUser() {
 	//Map input to user Model
@@ -99,6 +132,7 @@ func CreateStandardAdminUser() {
 	user.Email = "admin@admin.com"
 	user.Password = "password"
 	user.Verified = true
+	user.UUID = uuid.New()
 	//Hash Password
 	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	user.Password = string(hash)

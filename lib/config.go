@@ -10,6 +10,8 @@ import (
 var Config ConfigStruct
 
 type ConfigStruct struct {
+	//
+	AppName string
 	//Database Driver SQLITE, POSTGRESQL
 	DbDriver string
 	//Database Filename (for SQLITE)
@@ -48,6 +50,8 @@ func LoadConfig(path string) (ConfigStruct, error) {
 	if err != nil {
 		fmt.Println(err, "\n=============================\n", "Creating config.json!", "\n=============================")
 		//If config does not exist yet, create one
+		payload.AppName = "MyApp"
+
 		payload.TokenSecret = "ABCDEFG"
 
 		payload.Port = "3000"

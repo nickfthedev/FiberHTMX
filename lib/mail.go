@@ -5,7 +5,7 @@ import (
 	"net/smtp"
 )
 
-func SendEmail(recipient string, subject string, body string) error {
+func SendEmail(recipient string, subject string, body string, contentType string) error {
 	smtpHost := Config.SMTPHost
 	smtpPort := Config.SMTPPort
 	smtpUser := Config.SMTPUser
@@ -51,7 +51,8 @@ func SendEmail(recipient string, subject string, body string) error {
 
 	msg := "From: " + smtpUser + "\n" +
 		"To: " + recipient + "\n" +
-		"Subject: " + subject + "\n\n" +
+		"Subject: " + subject + "\n" +
+		"MIME-version: 1.0;\nContent-Type: " + contentType + "; charset=\"UTF-8\";\n\n" +
 		body
 
 	_, err = w.Write([]byte(msg))

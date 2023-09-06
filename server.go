@@ -76,7 +76,7 @@ func main() {
 	page.Get("/register", controller.RenderRegister)
 	page.Get("/login", controller.RenderLogin)
 	page.Get("logout", controller.LogoutUser)
-
+	page.Get("user/verify/:uuid", controller.VerifyUser)
 	//
 	// Routes which return HTML Chuncks for HTMX
 	//
