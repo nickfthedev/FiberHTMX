@@ -47,8 +47,9 @@ func main() {
 	engine := html.New("./views", ".html")
 
 	app := fiber.New(fiber.Config{
-		Views:       engine,
-		ViewsLayout: "layouts/main",
+		Views:             engine,
+		ViewsLayout:       "layouts/main",
+		PassLocalsToViews: true,
 	})
 
 	// Static folder
@@ -80,7 +81,7 @@ func main() {
 	// Routes which return HTML Chuncks for HTMX
 	//
 	htmx.Post("register", controller.CreateUser)
-	htmx.Post("login", controller.LoginUser)
+	page.Post("login", controller.LoginUser)
 
 	// Start server
 	log.Fatal(app.Listen("127.0.0.1:3000"))

@@ -17,18 +17,18 @@ func CreateUser(c *fiber.Ctx) error {
 	//Check if all fields are filled
 	checkUser := new(model.RegisterUser)
 	if err := c.BodyParser(checkUser); err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input!"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input!"}, "common/empty")
 		//return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err.Error()})
 	}
 	//Check if Password and ConfirmPassword Match
 	if checkUser.Password != checkUser.ConfirmPassword {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Passwords does not match"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Passwords does not match"}, "common/empty")
 		//return c.Status(500).JSON(fiber.Map{"error": "Passwords does not match"})
 	}
 	//Check if password has at least 6 characters, one uppercase, one lowercase and one number
 	password := checkUser.Password
 	if len(password) < 6 {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Password must be at least 6 characters long"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Password must be at least 6 characters long"}, "common/empty")
 		//return c.Status(500).JSON(fiber.Map{"error": "Password must be at least 6 characters long"})
 	}
 	var (
@@ -47,14 +47,14 @@ func CreateUser(c *fiber.Ctx) error {
 		}
 	}
 	if !hasUpper || !hasLower || !hasDigit {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Password must have at least one uppercase, one lowercase and one number"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Password must have at least one uppercase, one lowercase and one number"}, "common/empty")
 		//return c.Status(500).JSON(fiber.Map{"error": "Password must have at least one uppercase, one lowercase and one number"})
 	}
 
 	//Map input to user Model
 	user := new(model.User)
 	if err := c.BodyParser(user); err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input"}, "common/empty")
 		//return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Review your input", "data": err.Error()})
 	}
 
@@ -73,19 +73,19 @@ func CreateUser(c *fiber.Ctx) error {
 	//Hash Password
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	if err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to hash password"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to hash password"}, "common/empty")
 		//return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Failed to hash password", "data": err.Error()})
 	}
 	user.Password = string(hash)
 	result := db.DB.Create(&user) // pass pointer of data to Create
 	if result.Error != nil {      //Error handling
 		if strings.Contains(result.Error.Error(), "UNIQUE constraint failed: users.email") {
-			return c.Render("common/error", fiber.Map{"ErrorMessage": "Registration failed", "ErrorCode": "E-Mail is already in use "}, "common/messagelayout")
+			return c.Render("common/error", fiber.Map{"ErrorMessage": "Registration failed", "ErrorCode": "E-Mail is already in use "}, "common/empty")
 		}
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to create user", "ErrorCode": result.Error.Error()}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to create user", "ErrorCode": result.Error.Error()}, "common/empty")
 	}
 	//If no error send back ok
-	return c.Render("common/success", fiber.Map{"SuccessMessage": "Registered successfully", "SuccessCode": "You can now login"}, "common/messagelayout")
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "Registered successfully", "SuccessCode": "You can now login"}, "common/empty")
 	//return c.JSON(fiber.Map{"status": "success", "message": "User successfully created", "data": user.ID})
 
 } // func CreateUser(c *fiber.Ctx)

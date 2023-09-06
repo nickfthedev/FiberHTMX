@@ -70,12 +70,11 @@ func CheckLogin(c *fiber.Ctx) (model.User, error) {
 
 func IsLoggedIn(c *fiber.Ctx) error {
 	user, _ := CheckLogin(c)
-	if &user != nil {
-		c.Locals("name", user.Name)
-		c.Locals("id", user.ID)
-		c.Locals("isLoggedIn", true)
+	if user.ID != 0 {
+		c.Locals("Name", user.Name)
+		c.Locals("ID", user.ID)
+		c.Locals("IsLoggedIn", true)
 	}
-	c.Locals("message", "Hello, World!")
 	return c.Next()
 }
 

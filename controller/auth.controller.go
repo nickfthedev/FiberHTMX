@@ -48,17 +48,17 @@ func LoginUser(c *fiber.Ctx) error {
 
 	var input model.UserLoginInput // Validate input
 	if err := c.BodyParser(&input); err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input!"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Review your input!"}, "common/empty")
 	}
 
 	// Find user if exists
 	var user model.User
 	if err := db.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/empty")
 	}
 	//Check Password against Database
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/empty")
 
 	}
 
@@ -71,7 +71,7 @@ func LoginUser(c *fiber.Ctx) error {
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString([]byte(lib.Config.TokenSecret))
 	if err != nil {
-		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to create token"}, "common/messagelayout")
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to create token"}, "common/empty")
 	}
 
 	// Create cookie
@@ -83,16 +83,8 @@ func LoginUser(c *fiber.Ctx) error {
 
 	// Set cookie
 	c.Cookie(cookie)
-	// ...
-
-	// // Create second Cookie with UserID
-	// cookieUserID := new(fiber.Cookie)
-	// cookieUserID.Name = "UserID"
-	// cookieUserID.Value = fmt.Sprint(user.ID)
-	// cookieUserID.Expires = time.Now().Add(30 * 24 * time.Hour)
-	// cookieUserID.SameSite = "lax"
-	// c.Cookie(cookieUserID) //Set Cookie with UserID
 
 	//Return Token in Response
-	return c.Render("common/success", fiber.Map{"SuccessMessage": "Logged in successfully"}, "common/messagelayout")
-} //LoginUser
+	c.Append("HX-Trigger", "myEvent")
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "Logged in successfully"}, "common/empty")
+}
