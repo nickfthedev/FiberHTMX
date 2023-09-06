@@ -68,6 +68,7 @@ func CheckLogin(c *fiber.Ctx) (model.User, error) {
 	}
 }
 
+// Sets c.Locals for Name, ID and IsLoggedIn for use in templates
 func IsLoggedIn(c *fiber.Ctx) error {
 	user, _ := CheckLogin(c)
 	if user.ID != 0 {
@@ -78,7 +79,16 @@ func IsLoggedIn(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-// Middleware checks if a user is loggedin
+// Middleware Access for Guest only for example register and login
+func GuestOnly(c *fiber.Ctx) error {
+	user, _ := CheckLogin(c)
+	if user.ID == 0 {
+		return c.Next()
+	}
+	return c.Redirect("/")
+}
+
+// Access for logged in users only
 func LoginRequired(c *fiber.Ctx) error {
 	_, err := CheckLogin(c)
 	if err != nil {

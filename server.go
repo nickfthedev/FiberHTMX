@@ -73,15 +73,15 @@ func main() {
 			"Title": "Protected Page!",
 		})
 	})
-	page.Get("/register", controller.RenderRegister)
-	page.Get("/login", controller.RenderLogin)
+	page.Get("/register", middleware.GuestOnly, controller.RenderRegister)
+	page.Get("/login", middleware.GuestOnly, controller.RenderLogin)
 	page.Get("logout", controller.LogoutUser)
 	page.Get("user/verify/:uuid", controller.VerifyUser)
 	//
 	// Routes which return HTML Chuncks for HTMX
 	//
 	htmx.Post("register", controller.CreateUser)
-	page.Post("login", controller.LoginUser)
+	htmx.Post("login", controller.LoginUser)
 
 	// Start server
 	log.Fatal(app.Listen("127.0.0.1:3000"))
