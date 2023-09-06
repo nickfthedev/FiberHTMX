@@ -26,9 +26,9 @@ type ConfigStruct struct {
 	// Secret Token (do not share!)
 	TokenSecret string
 	// API Port
-	APIPort string
+	Port string
 	// API URL
-	APIUrl string
+	Host string
 
 	// SMTP
 	SMTPPort string
@@ -50,8 +50,8 @@ func LoadConfig(path string) (ConfigStruct, error) {
 		//If config does not exist yet, create one
 		payload.TokenSecret = "ABCDEFG"
 
-		payload.APIPort = "3000"
-		payload.APIUrl = "127.0.0.1"
+		payload.Port = "3000"
+		payload.Host = "127.0.0.1"
 
 		payload.DbDriver = "SQLITE"
 		payload.DbFileName = "database.sqlite"
