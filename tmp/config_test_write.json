@@ -9,5 +9,9 @@
  "PostgresURL": "",
  "TokenSecret": "",
  "APIPort": "",
- "APIUrl": ""
+ "APIUrl": "",
+ "SMTPPort": "",
+ "SMTPHost": "",
+ "SMTPUser": "",
+ "SMTPPass": ""
 }

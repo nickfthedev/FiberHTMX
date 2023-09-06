@@ -9,5 +9,9 @@
  "PostgresURL": "PREFERRED WAY OF CONNECTING",
  "TokenSecret": "ABCDEFG",
  "APIPort": "3000",
- "APIUrl": "127.0.0.1"
+ "APIUrl": "127.0.0.1",
+ "SMTPPort": "",
+ "SMTPHost": "",
+ "SMTPUser": "",
+ "SMTPPass": ""
 }

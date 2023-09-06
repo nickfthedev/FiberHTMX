@@ -29,6 +29,12 @@ type ConfigStruct struct {
 	APIPort string
 	// API URL
 	APIUrl string
+
+	// SMTP
+	SMTPPort string
+	SMTPHost string
+	SMTPUser string
+	SMTPPass string
 }
 
 // }
@@ -57,6 +63,10 @@ func LoadConfig(path string) (ConfigStruct, error) {
 		payload.DbPort = "DB PORT IF POSTGRESQL is used"
 		payload.PostgresURL = "PREFERRED WAY OF CONNECTING"
 
+		payload.SMTPHost = ""
+		payload.SMTPPort = ""
+		payload.SMTPUser = ""
+		payload.SMTPPass = ""
 		WriteConfig(payload, path)
 
 	}
