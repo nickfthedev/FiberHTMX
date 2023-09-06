@@ -9,7 +9,6 @@ import (
 
 var Config ConfigStruct
 
-
 type ConfigStruct struct {
 	//Database Driver SQLITE, POSTGRESQL
 	DbDriver string
@@ -30,18 +29,9 @@ type ConfigStruct struct {
 	APIPort string
 	// API URL
 	APIUrl string
-	// List of Plugin structs
-	//PluginList []Plugin
 }
 
-// type Plugin struct {
-// 	Name string
-// 	Port string
-// 	// Determines if the executable should be build before run.
-// 	// Requires golang compiler and source code of plugin in folder
-// 	BuildExecutable bool
 // }
-
 
 // Load config.json from root. If the file does not exist, a config.json will be created
 func LoadConfig(path string) (ConfigStruct, error) {
@@ -66,10 +56,6 @@ func LoadConfig(path string) (ConfigStruct, error) {
 		payload.DbUser = "DB USERNAME IF POSTGRESQL is used"
 		payload.DbPort = "DB PORT IF POSTGRESQL is used"
 		payload.PostgresURL = "PREFERRED WAY OF CONNECTING"
-
-		//var pluginExampleList []Plugin
-		//pluginExampleList = append(pluginExampleList, Plugin{Name: "plugin-example", Port: "3002"})
-		//payload.PluginList = pluginExampleList
 
 		WriteConfig(payload, path)
 
