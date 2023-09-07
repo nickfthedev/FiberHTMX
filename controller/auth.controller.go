@@ -26,7 +26,7 @@ func RenderResetPasswordSet(c *fiber.Ctx) error {
 	}
 	// Token expired
 	if time.Now().After(rp.UpdatedAt.Add(60 * time.Minute)) {
-		return c.Render("auth/resetpassword", fiber.Map{"ErrorMessage": "Your Key is expired. Please request a new email."})
+		return c.Render("auth/resetpassword", fiber.Map{"ErrorMessage": "Your Key is expired. Please request a new email to reset your password."})
 	}
 	return c.Render("auth/resetpasswordset", fiber.Map{"key": key})
 }
@@ -74,6 +74,10 @@ func ResetPasswordSet(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 
+	// Token expired
+	if time.Now().After(rp.UpdatedAt.Add(60 * time.Minute)) {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Your Key is expired. Please request a new email to reset your password"}, "common/empty")
+	}
 	// Get user from DB
 	user := new(model.User)
 	db.DB.Where("uuid = ?", rp.UserUUID).First(&user)
