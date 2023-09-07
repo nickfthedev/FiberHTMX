@@ -1,0 +1,76 @@
+<script>
+    function disableButton() {
+        var btn = document.getElementById('buttonSend');
+        btn.disabled = true;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function enableButton(){
+        var btn = document.getElementById('buttonSend');
+        btn.disabled = false;
+    }
+
+    // TODO Add ReCaptcha
+</script>
+
+<main class="py-4 mb-auto">
+  <div class="mx-auto max-w-2xl p-2 sm:px-6 lg:px-8">
+    <div id="result" class="w-full"></div>
+
+    <h2
+      class="mt-2 text-center text-3xl font-bold tracking-tight text-base-content"
+    >
+      Contact Us
+    </h2>
+    <p class="text-center mt-1">
+      Send us an email if you have a question or feedback.
+    </p>
+
+    <form
+      hx-post="/contact"
+      hx-swap="innerHTML"
+      hx-target="#result"
+      method="POST"
+      onsubmit="disableButton()"
+      class="flex flex-col items-center space-y-2 w-full pt-4"
+    >
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Your Name</span>
+        </label>
+        <input
+          type="text"
+          label="Name"
+          placeholder="Name"
+          onchange="enableButton()"
+          name="name"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Your Email</span>
+        </label>
+        <input
+          type="email"
+          label="email"
+          onchange="enableButton()"
+
+          placeholder="Email"
+          name="email"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">Your Message</span>
+        </label>
+        
+        <textarea rows="12" onchange="enableButton()" class="textarea textarea-bordered" placeholder="Your message" name="message"></textarea>
+        
+      </div>
+      <button class="btn btn-primary w-full md:w-1/4 self-end mt-4" id="buttonSend">
+        Send
+      </button>
+    </form>
+  </div>
+</main>
