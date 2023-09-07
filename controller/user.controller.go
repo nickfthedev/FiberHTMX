@@ -15,6 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// HTMX
 func UpdateUserPassword(c *fiber.Ctx) error {
 	userpw := new(model.UserChangePassword)
 	if err := c.BodyParser(userpw); err != nil {
@@ -71,9 +72,9 @@ func UpdateUserPassword(c *fiber.Ctx) error {
 
 	}
 	return c.Render("common/success", fiber.Map{"SuccessMessage": "Password has been changed successfully"}, "common/empty")
-
 }
 
+// HTMX
 func UpdateUserProfile(c *fiber.Ctx) error {
 	userid := c.Locals("ID")
 	// Parse the form data
@@ -108,6 +109,7 @@ func UpdateUserProfile(c *fiber.Ctx) error {
 	return c.Render("common/success", fiber.Map{"SuccessMessage": "User profile updated successfully"}, "common/empty")
 }
 
+// PAGE
 func RenderUpdateUser(c *fiber.Ctx) error {
 	// Create a new instance of the User model
 	user := new(model.User)
@@ -125,6 +127,7 @@ func RenderUpdateUser(c *fiber.Ctx) error {
 	return c.Render("user/updateprofile", fiber.Map{"user": userSafe})
 }
 
+// PAGE
 func VerifyUser(c *fiber.Ctx) error {
 	// Get the UUID from the URL
 	uuid := c.Params("uuid")
@@ -151,7 +154,7 @@ func VerifyUser(c *fiber.Ctx) error {
 	return c.Render("auth/login", fiber.Map{"SuccessMessage": "User verified successfully"})
 }
 
-// func CreateUser
+// HTMX
 func CreateUser(c *fiber.Ctx) error {
 	//Check if all fields are filled
 	checkUser := new(model.RegisterUser)
@@ -234,6 +237,7 @@ func CreateUser(c *fiber.Ctx) error {
 	return c.Render("common/success", fiber.Map{"SuccessMessage": "Registered successfully", "SuccessCode": "We send you an email to verify your account. After verification you can login"}, "common/empty")
 }
 
+// INIT APP
 func CreateStandardAdminUser() {
 	//Map input to user Model
 	user := new(model.User)

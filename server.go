@@ -81,6 +81,7 @@ func main() {
 	page.Post("user/updatepassword", middleware.LoginRequired, controller.UpdateUserPassword)
 	page.Get("auth/resetpassword", controller.RenderResetPassword)
 	page.Get("auth/resetpassword/set/:key", controller.RenderResetPasswordSet)
+
 	//
 	// Routes which return HTML Chuncks for HTMX
 	//

@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Renders Reset Password Page where you set the password
+// PAGE | Renders Reset Password Page where you set the password
 func RenderResetPasswordSet(c *fiber.Ctx) error {
 	key := c.Params("key") // Secret Key
 	// Check DB for Key
@@ -25,13 +25,13 @@ func RenderResetPasswordSet(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 	// Token expired
-	if rp.UpdatedAt.After(time.Now().Add(3600)) {
+	if time.Now().After(rp.UpdatedAt.Add(60 * time.Minute)) {
 		return c.Render("auth/resetpassword", fiber.Map{"ErrorMessage": "Your Key is expired. Please request a new email."})
 	}
 	return c.Render("auth/resetpasswordset", fiber.Map{"key": key})
 }
 
-// Save the new password
+// HTMX | Save the new password
 func ResetPasswordSet(c *fiber.Ctx) error {
 	key := c.Params("key") // Secret Key
 	newPassword := c.FormValue("password")
@@ -90,16 +90,16 @@ func ResetPasswordSet(c *fiber.Ctx) error {
 	db.DB.Save(&user)
 	// Delete entry from ResetPassword Table
 	db.DB.Unscoped().Delete(&rp)
-
+	c.Append("HX-Trigger", "myEvent") // Send to redirect on success
 	return c.Render("common/success", fiber.Map{"SuccessMessage": "Password has been changed successfully"}, "common/empty")
 }
 
-// Renders Reset Password Page
+// PAGE | Renders Reset Password Page
 func RenderResetPassword(c *fiber.Ctx) error {
 	return c.Render("auth/resetpassword", fiber.Map{})
 }
 
-// Send a mail with a link for setting new password
+// PAGE | Send a mail with a link for setting new password
 func ResetPassword(c *fiber.Ctx) error {
 	email := c.FormValue("email")
 
@@ -131,17 +131,19 @@ func ResetPassword(c *fiber.Ctx) error {
 	return c.Render("common/success", fiber.Map{"SuccessMessage": "A Mail has been sent to your email account. Click the link in the email to reset your password"}, "common/empty")
 }
 
+// PAGE | Render register
 func RenderRegister(c *fiber.Ctx) error {
 	return c.Render("auth/register", fiber.Map{
 		"Title": "Hello, World!",
 	})
 }
 
+// PAGE | Render login
 func RenderLogin(c *fiber.Ctx) error {
 	return c.Render("auth/login", fiber.Map{})
 }
 
-// Logout USer & Destroy Cookie
+// PAGE (Only a redirect) | Logout User & Destroy Cookie
 func LogoutUser(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
@@ -160,7 +162,7 @@ func LogoutUser(c *fiber.Ctx) error {
 
 }
 
-// func LoginUser
+// PAGE
 func LoginUser(c *fiber.Ctx) error {
 
 	var input model.UserLoginInput // Validate input
@@ -176,6 +178,10 @@ func LoginUser(c *fiber.Ctx) error {
 	//Check Password against Database
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/empty")
+	}
+
+	if !user.Verified {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "You're not verified yet", "ErrorCode": "Please check your email inbox and spam folder"}, "common/empty")
 	}
 
 	//Generate JWT Token

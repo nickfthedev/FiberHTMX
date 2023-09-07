@@ -1,9 +1,11 @@
 <script>
-  document.body.addEventListener("myEvent", function (evt) {
-    //alert("myEvent was triggered!");
-    window.location.href = "/";
-  });
-</script>
+    document.body.addEventListener("myEvent", function (evt) {
+      function delay(time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+      }
+      delay(1000).then(() => (window.location.href = "/"));
+    });
+  </script>
 <main class="mb-auto max-w-7xl mx-auto justify-center gap-2">
   <div class="flex flex-col items-center h-full w-full">
     {{ if .SuccessMessage }}
