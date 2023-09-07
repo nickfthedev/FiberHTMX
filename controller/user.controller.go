@@ -15,12 +15,81 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Renders Reset Password Page where you set the password
+func RenderResetPasswordSet(c *fiber.Ctx) error {
+	return c.Render("auth/login", fiber.Map{})
+}
+
+// Save the new password
+func ResetPasswordSet(c *fiber.Ctx) error {
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "Password has been changed successfully"}, "common/empty")
+}
+
+// Renders Reset Password Page
+func RenderResetPassword(c *fiber.Ctx) error {
+	return c.Render("auth/login", fiber.Map{})
+}
+
+// Send a mail with a link for setting new password
+func ResetPassword(c *fiber.Ctx) error {
+	return c.Render("common/success", fiber.Map{"SuccessMessage": "A Mail has been sent to your email account. Click the link in the email to reset your password."}, "common/empty")
+}
+
 func UpdateUserPassword(c *fiber.Ctx) error {
 	userpw := new(model.UserChangePassword)
 	if err := c.BodyParser(userpw); err != nil {
 		return c.Render("common/error", fiber.Map{"ErrorMessage": "Could not parse the request body!"}, "common/empty")
 	}
-	fmt.Printf("%#v\n", userpw)
+	if userpw.NewPassword != userpw.ConfirmPassword {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "The new password and the confirm password do not match. Please try again!"}, "common/empty")
+	}
+	//Check if password has at least 6 characters, one uppercase, one lowercase and one number
+	password := userpw.NewPassword
+	if len(password) < 6 {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Password must be at least 6 characters long"}, "common/empty")
+		//return c.Status(500).JSON(fiber.Map{"error": "Password must be at least 6 characters long"})
+	}
+	var (
+		hasUpper bool
+		hasLower bool
+		hasDigit bool
+	)
+	for _, char := range password {
+		switch {
+		case unicode.IsUpper(char):
+			hasUpper = true
+		case unicode.IsLower(char):
+			hasLower = true
+		case unicode.IsDigit(char):
+			hasDigit = true
+		}
+	}
+	if !hasUpper || !hasLower || !hasDigit {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Password must have at least one uppercase, one lowercase and one number"}, "common/empty")
+		//return c.Status(500).JSON(fiber.Map{"error": "Password must have at least one uppercase, one lowercase and one number"})
+	}
+	// Get user data from DB
+	var user model.User
+	if err := db.DB.Where("UUID = ?", c.Locals("UUID")).First(&user).Error; err != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "User not found in DB"}, "common/empty")
+	}
+	// Check Password against Database
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userpw.OldPassword)); err != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Your current password is not correct"}, "common/empty")
+	}
+	//Hash Password
+	hash, err := bcrypt.GenerateFromPassword([]byte(userpw.NewPassword), 10)
+	if err != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to hash password"}, "common/empty")
+		//return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Failed to hash password", "data": err.Error()})
+	}
+	user.Password = string(hash)
+	// Save the updated user details
+	res := db.DB.Save(&user)
+	if res.Error != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to update user", "ErrorCode": res.Error.Error()}, "common/empty")
+
+	}
 	return c.Render("common/success", fiber.Map{"SuccessMessage": "Password has been changed successfully"}, "common/empty")
 
 }
@@ -72,7 +141,7 @@ func RenderUpdateUser(c *fiber.Ctx) error {
 	//Unmarshall userJSON to userSafe instance without Password
 	_ = json.Unmarshal(userJSON, &userSafe)
 
-	fmt.Printf("%+v\n", userSafe)
+	//fmt.Printf("%+v\n", userSafe)
 	return c.Render("user/updateprofile", fiber.Map{"user": userSafe})
 }
 

@@ -56,7 +56,6 @@ func LoginUser(c *fiber.Ctx) error {
 	//Check Password against Database
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email or Password incorrect"}, "common/empty")
-
 	}
 
 	//Generate JWT Token
