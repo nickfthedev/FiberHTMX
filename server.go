@@ -33,7 +33,7 @@ func main() {
 	// Database
 	//
 	db.ConnectDB(lib.Config)
-	db.DB.AutoMigrate(&model.User{})
+	db.DB.AutoMigrate(&model.User{}, &model.ResetPassword{})
 	// Create standard user if no user is found in database
 	// TODO Firstorcreate GORM
 	var u model.User
@@ -79,11 +79,15 @@ func main() {
 	page.Get("user/update", middleware.LoginRequired, controller.RenderUpdateUser)
 	page.Post("user/update", middleware.LoginRequired, controller.UpdateUserProfile)
 	page.Post("user/updatepassword", middleware.LoginRequired, controller.UpdateUserPassword)
+	page.Get("auth/resetpassword", controller.RenderResetPassword)
+	page.Get("auth/resetpassword/set/:key", controller.RenderResetPasswordSet)
 	//
 	// Routes which return HTML Chuncks for HTMX
 	//
 	htmx.Post("register", controller.CreateUser)
 	htmx.Post("login", controller.LoginUser)
+	htmx.Post("auth/resetpassword", controller.ResetPassword)
+	htmx.Post("auth/resetpassword/set/:key", controller.ResetPasswordSet)
 
 	// Start server
 	log.Fatal(app.Listen("127.0.0.1:3000"))

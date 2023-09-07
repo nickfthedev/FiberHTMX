@@ -15,26 +15,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Renders Reset Password Page where you set the password
-func RenderResetPasswordSet(c *fiber.Ctx) error {
-	return c.Render("auth/login", fiber.Map{})
-}
-
-// Save the new password
-func ResetPasswordSet(c *fiber.Ctx) error {
-	return c.Render("common/success", fiber.Map{"SuccessMessage": "Password has been changed successfully"}, "common/empty")
-}
-
-// Renders Reset Password Page
-func RenderResetPassword(c *fiber.Ctx) error {
-	return c.Render("auth/login", fiber.Map{})
-}
-
-// Send a mail with a link for setting new password
-func ResetPassword(c *fiber.Ctx) error {
-	return c.Render("common/success", fiber.Map{"SuccessMessage": "A Mail has been sent to your email account. Click the link in the email to reset your password."}, "common/empty")
-}
-
 func UpdateUserPassword(c *fiber.Ctx) error {
 	userpw := new(model.UserChangePassword)
 	if err := c.BodyParser(userpw); err != nil {
@@ -246,7 +226,7 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 	// Send Verification Mail
 	msg := "Welcome to " + lib.Config.AppName + "!<br><br> Please verify your account and click the link: <a href=\"https://" + lib.Config.Host + "/user/verify/" + user.UUID.String() + "\">Verify Account</a>"
-	errMail := lib.SendEmail(user.Email, "Activate your Account", msg, "text/html")
+	errMail := lib.SendEmail(user.Email, "Activate your Account | "+lib.Config.AppName, msg, "text/html")
 	if errMail != nil {
 		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to send activation Mail, but registered successfully."}, "common/empty")
 	}
