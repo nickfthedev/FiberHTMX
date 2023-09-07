@@ -80,6 +80,7 @@ func main() {
 	page.Post("user/updatepassword", middleware.LoginRequired, controller.UpdateUserPassword)
 	page.Get("auth/resetpassword", controller.RenderResetPassword)
 	page.Get("auth/resetpassword/set/:key", controller.RenderResetPasswordSet)
+	page.Get("user/verifyemail/:key", controller.UpdateEmailVerify)
 	page.Get("contact", controller.RenderContactFormular)
 	//
 	// Routes which return HTML Chuncks for HTMX
@@ -89,6 +90,7 @@ func main() {
 	htmx.Post("auth/resetpassword", controller.ResetPassword)
 	htmx.Post("auth/resetpassword/set/:key", controller.ResetPasswordSet)
 	htmx.Post("user/update", middleware.LoginRequired, controller.UpdateUserProfile)
+	htmx.Post("user/updateemail", middleware.LoginRequired, controller.UpdateEmail)
 	htmx.Post("contact", controller.SubmitContactFormular)
 
 	// Start server

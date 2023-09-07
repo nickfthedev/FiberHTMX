@@ -1,9 +1,11 @@
 <script>
-    function handleChangeMailClick(){
-        btn1 = document.getElementById("btn1")
-        btn2 = document.getElementById("btn2")
-        // TODO go further
-    }
+  function handleChangeMailClick() {
+    btn1 = document.getElementById("btn1");
+    btn2 = document.getElementById("btn2");
+    btn1.classList.add("hidden");
+    btn2.classList.remove("hidden");
+    document.getElementById("email").disabled = false;
+  }
 </script>
 <main class="py-4 mb-auto">
   <div class="mx-auto max-w-4xl p-2 sm:px-6 lg:px-8">
@@ -38,6 +40,7 @@
           <input
             value="{{ .user.Email }}"
             type="email"
+            id="email"
             label="E-Mail"
             placeholder="E-Mail"
             name="email"
@@ -45,9 +48,22 @@
             disabled
           />
         </div>
-        <button class="btn btn-outline" id="btn1" onclick="handleChangeMailClick()">Change</button>
-        <button class="btn btn-primary" id="btn2">Save</button>
-
+        <button
+          class="btn btn-outline"
+          id="btn1"
+          onclick="handleChangeMailClick()"
+        >
+          Change
+        </button>
+        <button
+          class="btn btn-primary hidden"
+          id="btn2"
+          hx-post="/user/updateemail"
+          hx-swap="innerHTML"
+          hx-target="#result"
+        >
+          Save
+        </button>
       </div>
     </div>
 

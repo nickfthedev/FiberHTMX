@@ -15,6 +15,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// PAGE
+func UpdateEmailVerify(c *fiber.Ctx) error {
+	return c.Render("user/updateemailverify", fiber.Map{"SuccessMessage": "New Email verified. You can close this window now."})
+}
+
+// HTMX
+func UpdateEmail(c *fiber.Ctx) error {
+
+	// TODO Create model for change of email address
+
+	// Create a db entry for request
+
+	// Send mail with link
+
+	return c.Render("common/success", fiber.Map{
+		"SuccessMessage": "Your Email address change is now in process.",
+		"SuccessCode":    "We sent you an email. Please verify your new email address",
+	}, "common/empty")
+}
+
 // HTMX
 func UpdateUserPassword(c *fiber.Ctx) error {
 	userpw := new(model.UserChangePassword)
