@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,18 +18,62 @@ import (
 
 // PAGE
 func UpdateEmailVerify(c *fiber.Ctx) error {
-	return c.Render("user/updateemailverify", fiber.Map{"SuccessMessage": "New Email verified. You can close this window now."})
+	key := c.Params("key")
+	// Check Token
+	cm := new(model.ChangeMail)
+	db.DB.Where("key = ?", key).First(&cm)
+	if cm.ID == 0 {
+		return c.Render("user/updateemailverify", fiber.Map{"ErrorMessage": "Invalid Key."})
+	}
+	// Token expired
+	if time.Now().After(cm.UpdatedAt.Add(60 * time.Minute)) {
+		return c.Render("user/updateemailverify", fiber.Map{"ErrorMessage": "Your Key is expired.", "ErrorCode": "Please try again and verify your email within one hour."})
+	}
+	user := new(model.User)
+	db.DB.Where("uuid = ?", cm.UserUUID).First(&user)
+	if user.ID == 0 {
+		return c.Render("user/updateemailverify", fiber.Map{"ErrorMessage": "User not found."})
+	}
+	user.Email = cm.NewMail
+	db.DB.Save(&user)
+
+	// Delete entry from ResetPassword Table
+	db.DB.Unscoped().Delete(&cm)
+	return c.Render("user/updateemailverify", fiber.Map{"SuccessMessage": "Email verified successfully."})
 }
 
 // HTMX
 func UpdateEmail(c *fiber.Ctx) error {
-
-	// TODO Create model for change of email address
-
+	email := c.FormValue("email")
+	if email == "" {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email can't be empty!"}, "common/empty")
+	}
+	// Check if Address already exist
+	u := new(model.User)
+	db.DB.Where("email = ?", email).First(&u)
+	if u.ID != 0 {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Email already in use!"}, "common/empty")
+	}
 	// Create a db entry for request
-
+	cm := new(model.ChangeMail)
+	db.DB.Where("user_uuid = ?", c.Locals("UUID")).First(&cm)
+	// Create database entry
+	if cm.ID == 0 { // No entry for now create a new one
+		cm.UserUUID = c.Locals("UUID").(uuid.UUID)
+		cm.Key = uuid.New()
+		cm.NewMail = email
+		db.DB.Create(&cm)
+	} else { // Update the existing entry for password reset
+		cm.Key = uuid.New()
+		cm.NewMail = email
+		db.DB.Save(&cm)
+	}
 	// Send mail with link
-
+	msg := "Here is your link for changing your password for " + lib.Config.AppName + "!+<br><br> Please click the link below to verify your new email address: <br><br> <a href=\"https://" + lib.Config.Host + "/user/verifyemail/" + cm.Key.String() + "\">Verify your email address</a><br><br><i>The link is only valid for 1 hour</i>"
+	errMail := lib.SendEmail(email, "Verify your new email address | "+lib.Config.AppName, msg, "text/html")
+	if errMail != nil {
+		return c.Render("common/error", fiber.Map{"ErrorMessage": "Failed to send Mail. Please try again"}, "common/empty")
+	}
 	return c.Render("common/success", fiber.Map{
 		"SuccessMessage": "Your Email address change is now in process.",
 		"SuccessCode":    "We sent you an email. Please verify your new email address",

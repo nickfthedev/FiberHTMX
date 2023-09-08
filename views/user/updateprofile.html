@@ -32,7 +32,7 @@
           disabled
         />
       </div>
-      <div class="flex flex-row w-full items-end gap-2">
+      <form class="flex flex-row w-full items-end gap-2">
         <div class="form-control grow">
           <label class="label">
             <span class="label-text">E-Mail</span>
@@ -52,6 +52,9 @@
           class="btn btn-outline"
           id="btn1"
           onclick="handleChangeMailClick()"
+          type="button"
+          
+          hx-attributes="disabled:true"
         >
           Change
         </button>
@@ -65,7 +68,7 @@
           Save
         </button>
       </div>
-    </div>
+    </form>
 
     <div class="divider"></div>
     <div id="resultpr" class="w-full mb-3"></div>

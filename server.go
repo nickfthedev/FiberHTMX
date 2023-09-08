@@ -33,7 +33,7 @@ func main() {
 	// Database
 	//
 	db.ConnectDB(lib.Config)
-	db.DB.AutoMigrate(&model.User{}, &model.ResetPassword{})
+	db.DB.AutoMigrate(&model.User{}, &model.ResetPassword{}, &model.ChangeMail{})
 	// Create standard user if no user is found in database
 	// TODO Firstorcreate GORM
 	var u model.User
